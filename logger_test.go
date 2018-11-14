@@ -84,3 +84,18 @@ func TestUnexpectedLoggerLevel(t *testing.T) {
 		t.Errorf("expected error for unexpected log level")
 	}
 }
+
+func TestFormatMsg(t *testing.T) {
+	_, err := formatMsg(-1, "foo")
+	if err == nil {
+		t.Error("no error returned for undefined log level")
+	}
+	expected := randString(6)
+	received, err := formatMsg(Debug, expected)
+	if err != nil {
+		t.Error(err)
+	}
+	if !strings.Contains(received, expected) {
+		t.Errorf("expected %s to be contained within %s", expected, received)
+	}
+}

@@ -7,6 +7,8 @@ package logging
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 )
 
 const (
@@ -59,8 +61,8 @@ type Logger interface {
 	Log(level Level, msg string, context ...string) error
 }
 
-// StringifyLevel is a simple helper to convert a Level to a string.
-func StringifyLevel(l Level) (string, error) {
+// stringifyLevel is a simple helper to convert a Level to a string.
+func stringifyLevel(l Level) (string, error) {
 	switch l {
 	case Emergency:
 		return "Emergency", nil
@@ -81,6 +83,22 @@ func StringifyLevel(l Level) (string, error) {
 	default:
 		return "", errors.New("Undefined log level")
 	}
+}
+
+func formatMsg(level Level, msg string, context ...string) (string, error) {
+	var (
+		content string
+		l       string
+		err     error
+	)
+	if l, err = stringifyLevel(level); err != nil {
+		return "", err
+	}
+	content = fmt.Sprintf("[%s] %s", l, msg)
+	for _, extra := range context {
+		content = strings.Join([]string{content, extra}, ", ")
+	}
+	return content, nil
 }
 
 type logger struct {

@@ -1,10 +1,8 @@
 package logging
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 // StdoutLogger is the default Logger implementation. It will take messages and
@@ -19,15 +17,11 @@ func NewStdoutLogger() *StdoutLogger {
 }
 
 func (logger *StdoutLogger) Log(level Level, msg string, context ...string) error {
-	l, err := StringifyLevel(level)
+	formattedMsg, err := formatMsg(level, msg, context...)
 	if err != nil {
 		return err
 	}
-	content := fmt.Sprintf("[%s] %s", l, msg)
-	for _, extra := range context {
-		content = strings.Join([]string{content, extra}, ", ")
-	}
-	logger.output.Println(content)
+	logger.output.Println(formattedMsg)
 	return nil
 }
 
